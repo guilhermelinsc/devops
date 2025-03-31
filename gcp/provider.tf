@@ -1,7 +1,7 @@
 terraform {
   backend "gcs" {
     bucket = "tf_glcs_backend"
-    prefix = "terraform/state"
+    #prefix = "terraform/state"
   }
   required_providers {
     google = {
