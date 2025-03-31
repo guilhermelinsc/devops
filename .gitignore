@@ -44,4 +44,4 @@ deploy*.log*
 create_files.sh
 terraform/.terraform.lock.hcl
 terraform/plano
-deploy.sh
+./deploy.sh
