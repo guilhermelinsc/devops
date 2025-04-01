@@ -69,7 +69,7 @@ resource "google_compute_instance_template" "webapp_template" {
     access_config {} # Required for public IP
   }
 
-  metadata_startup_script = "echo 'Hello, World!' > /var/www/html/index.html"
+  metadata_startup_script = "#! /bin/bash\n     sudo apt update\n     sudo apt install apache2 net-tools -y\n     vm_hostname=\"$(curl -H \"Metadata-Flavor:Google\" \\\n   http://169.254.169.254/computeMetadata/v1/instance/name)\"\n   sudo echo \"Page served from: $vm_hostname\" | \\\n   tee /var/www/html/index.html\n   sudo systemctl restart apache2"
 }
 
 resource "google_compute_instance_group_manager" "webapp_group" {
