@@ -15,7 +15,7 @@ resource "google_compute_subnetwork" "subnet" {
 module "firewall_rules" {
   source       = "terraform-google-modules/network/google//modules/firewall-rules"
   project_id   = var.project_id
-  network_name = var.network_name
+  network_name = google_compute_network.vpc.name
 
   rules = [{
     name          = "allow-ssh-ingress"
@@ -64,8 +64,8 @@ resource "google_compute_instance_template" "webapp_template" {
   }
 
   network_interface {
-    network    = var.network_name
-    subnetwork = var.subnet_name
+    network    = google_compute_network.vpc.name
+    subnetwork = google_compute_subnetwork.subnet.name
     access_config {} # Required for public IP
   }
 

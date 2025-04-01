@@ -1,6 +1,5 @@
 variable "project_id" {
   description = "The unique identifier of the Google Cloud project where resources will be deployed. This is required to manage and associate all resources within the specified project."
-  default     = "modular-rex-454820-v2"
 }
 
 # variable "region" {
