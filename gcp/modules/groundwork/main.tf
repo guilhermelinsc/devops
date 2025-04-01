@@ -111,9 +111,6 @@ resource "google_compute_backend_service" "webapp_backend" {
     balancing_mode  = "UTILIZATION"
     capacity_scaler = 1.0
   }
-  # backend {
-  #   group = "data.google_compute_instance_group.webapp_group.name"
-  # }
 }
 
 resource "google_compute_url_map" "webapp_map" {
