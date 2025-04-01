@@ -20,6 +20,7 @@ variable "subnet_name" {
   description = "The name of the subnet within the specified VPC network where instances will be deployed. This defines the IP range and regional placement of the resources."
   default     = "webapp-subnet"
 }
+
 variable "ip_cidr_range" {
   description = "The range of IPs for the private subnet defined by the variable 'subnet_name'."
   default     = "10.10.0.0/24"

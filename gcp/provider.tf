@@ -12,7 +12,7 @@ terraform {
 }
 
 provider "google" {
-  project     = "modular-rex-454820-v2"
+  project     = var.project_id
   region      = "us-east1"
   zone        = "us-east1-b"
   credentials = file(var.credentials_file)

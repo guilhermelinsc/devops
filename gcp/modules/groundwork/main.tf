@@ -12,6 +12,41 @@ resource "google_compute_subnetwork" "subnet" {
   region        = var.region
 }
 
+module "firewall_rules" {
+  source       = "terraform-google-modules/network/google//modules/firewall-rules"
+  project_id   = var.project_id
+  network_name = var.network_name
+
+  rules = [{
+    name          = "allow-ssh-ingress"
+    direction     = "INGRESS"
+    source_ranges = ["0.0.0.0/0"]
+    allow = [{
+      protocol = "tcp"
+      ports    = ["22"]
+    }]
+    deny = []
+    log_config = {
+      metadata = "INCLUDE_ALL_METADATA"
+    }
+    },
+    {
+      name          = "allow-http-ingress"
+      direction     = "INGRESS"
+      source_ranges = ["0.0.0.0/0"]
+      allow = [{
+        protocol = "tcp"
+        ports    = ["80"]
+      }]
+      deny = []
+      log_config = {
+        metadata = "INCLUDE_ALL_METADATA"
+      }
+  }]
+}
+
+
+
 # -- End of network definition -- #
 
 # Create the compute instance template to use for the compute instances.
@@ -56,20 +91,29 @@ resource "google_compute_instance_group_manager" "webapp_group" {
 # -- End of Instance Template definition -- #
 
 
-#  Create the Project's Internet facing components.
+#  Create the Project's Internet facing components and HealthCheck.
 
 resource "google_compute_health_check" "webapp_hc" {
   name               = "webapp-health-check"
   timeout_sec        = 5
   check_interval_sec = 10
   http_health_check {
-    port = "80"
+    request_path = "/"
+    port         = "80"
   }
 }
 
 resource "google_compute_backend_service" "webapp_backend" {
   name          = "webapp-backend"
   health_checks = [google_compute_health_check.webapp_hc.id]
+  backend {
+    group           = google_compute_instance_group_manager.webapp_group.instance_group
+    balancing_mode  = "UTILIZATION"
+    capacity_scaler = 1.0
+  }
+  # backend {
+  #   group = "data.google_compute_instance_group.webapp_group.name"
+  # }
 }
 
 resource "google_compute_url_map" "webapp_map" {

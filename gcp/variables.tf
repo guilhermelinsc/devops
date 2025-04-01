@@ -21,6 +21,10 @@ variable "credentials_file" {
 #   description = "The name of the subnet within the specified VPC network where instances will be deployed. This defines the IP range and regional placement of the resources."
 #   default     = "webapp-subnet"
 # }
+variable "ip_cidr_range" {
+  description = "The range of IPs for the private subnet defined by the variable 'subnet_name'."
+  default     = "10.10.0.0/24"
+}
 # variable "instance_count" {
 #   description = "The number of virtual machine instances to be created. This allows for scaling the deployment based on workload requirements."
 #   default     = 2
