@@ -3,7 +3,8 @@
 This project aims to automate the deployment of a WebServer using **Terraform, Packer, and Ansible.**
 
 Currently, this project provisions the infrastructure on **Google Cloud Platform (GCP)** using **Terraform**, to deploy a scalable web server environment behind a **load balancer**. 
-Each web server node serves a sample page that displays its own hostname, demonstrating which instance handled the request and the load balancing in action.
+
+Each web server node serves a sample page that displays its own hostname, demonstrating which instance handled the request and the load balancer in action.
 
 ## 📁 Project Structure
 
