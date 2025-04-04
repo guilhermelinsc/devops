@@ -1,23 +1,26 @@
 # Create Project's VPC and subnet.
 
-resource "google_compute_network" "vpc" {
-  name                    = var.network_name
-  auto_create_subnetworks = false
-}
+# resource "google_compute_network" "vpc" {
+#   name                    = var.network_name
+#   auto_create_subnetworks = false
+# }
 
-resource "google_compute_subnetwork" "subnet" {
-  name          = var.subnet_name
-  network       = google_compute_network.vpc.id
-  ip_cidr_range = var.ip_cidr_range
-  region        = var.region
-}
+module "vpc" {
+  source          = "terraform-google-modules/network/google"
+  version         = "~> 10.0"
+  project_id      = var.project_id
+  network_name    = var.network_name
+  shared_vpc_host = false
 
-module "firewall_rules" {
-  source       = "terraform-google-modules/network/google//modules/firewall-rules"
-  project_id   = var.project_id
-  network_name = google_compute_network.vpc.name
+  subnets = [
+    {
+      subnet_name   = var.subnet_name
+      subnet_ip     = var.ip_cidr_range
+      subnet_region = var.region
+    }
+  ]
 
-  rules = [{
+  ingress_rules = [{
     name          = "allow-ssh-ingress"
     direction     = "INGRESS"
     source_ranges = ["0.0.0.0/0"]
@@ -44,6 +47,46 @@ module "firewall_rules" {
       }
   }]
 }
+# resource "google_compute_subnetwork" "subnet" {
+#   name          = var.subnet_name
+#   network       = module.vpc.network_id
+#   ip_cidr_range = var.ip_cidr_range
+#   region        = var.region
+# }
+
+# module "firewall_rules" {
+#   source     = "terraform-google-modules/network/google//modules/firewall-rules"
+#   project_id = var.project_id
+#   #network_name = google_compute_network.vpc.name
+#   network_name = module.vpc.network_name
+
+#   rules = [{
+#     name          = "allow-ssh-ingress"
+#     direction     = "INGRESS"
+#     source_ranges = ["0.0.0.0/0"]
+#     allow = [{
+#       protocol = "tcp"
+#       ports    = ["22"]
+#     }]
+#     deny = []
+#     log_config = {
+#       metadata = "INCLUDE_ALL_METADATA"
+#     }
+#     },
+#     {
+#       name          = "allow-http-ingress"
+#       direction     = "INGRESS"
+#       source_ranges = ["0.0.0.0/0"]
+#       allow = [{
+#         protocol = "tcp"
+#         ports    = ["80"]
+#       }]
+#       deny = []
+#       log_config = {
+#         metadata = "INCLUDE_ALL_METADATA"
+#       }
+#   }]
+# }
 
 
 
@@ -64,8 +107,9 @@ resource "google_compute_instance_template" "webapp_template" {
   }
 
   network_interface {
-    network    = google_compute_network.vpc.name
-    subnetwork = google_compute_subnetwork.subnet.name
+    #network    = google_compute_network.vpc.name
+    network    = module.vpc.network_id
+    subnetwork = module.vpc.subnets_names[0]
     access_config {} # Required for public IP
   }
 
