@@ -33,10 +33,11 @@ module "vpc" {
       metadata = "INCLUDE_ALL_METADATA"
     }
     },
+    ### Only allow HTTTP access from the GCP Load Balancer. ###
     {
       name          = "allow-http-ingress"
       direction     = "INGRESS"
-      source_ranges = ["0.0.0.0/0"]
+      source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
       allow = [{
         protocol = "tcp"
         ports    = ["80"]
@@ -88,8 +89,6 @@ module "vpc" {
 #   }]
 # }
 
-
-
 # -- End of network definition -- #
 
 # Create the compute instance template to use for the compute instances.
@@ -137,40 +136,82 @@ resource "google_compute_instance_group_manager" "webapp_group" {
 
 #  Create the Project's Internet facing components and HealthCheck.
 
-resource "google_compute_health_check" "webapp_hc" {
-  name               = "webapp-health-check"
-  timeout_sec        = 5
-  check_interval_sec = 10
-  http_health_check {
-    request_path = "/"
-    port         = "80"
+# resource "google_compute_health_check" "webapp_hc" {
+#   name               = "webapp-health-check"
+#   timeout_sec        = 5
+#   check_interval_sec = 10
+#   http_health_check {
+#     request_path = "/"
+#     port         = "80"
+#   }
+# }
+
+module "gce-lb-http" {
+  source  = "GoogleCloudPlatform/lb-http/google"
+  version = ">= 12.0"
+
+  project = var.project_id
+  name    = "webapp-health-check"
+
+  backends = {
+    default = {
+      port               = 80
+      protocol           = "HTTP"
+      timeout_sec        = 10
+      check_interval_sec = 10
+      enable_cdn         = false
+
+
+      health_check = {
+        request_path = "/"
+        port         = 80
+      }
+
+      log_config = {
+        enable      = true
+        sample_rate = 1.0
+      }
+      groups = [
+        {
+          # Each node pool instance group should be added to the backend.
+          group           = google_compute_instance_group_manager.webapp_group.instance_group
+          balancing_mode  = "UTILIZATION"
+          capacity_scaler = 1.0
+        },
+      ]
+    }
+
+
   }
 }
 
-resource "google_compute_backend_service" "webapp_backend" {
-  name          = "webapp-backend"
-  health_checks = [google_compute_health_check.webapp_hc.id]
-  backend {
-    group           = google_compute_instance_group_manager.webapp_group.instance_group
-    balancing_mode  = "UTILIZATION"
-    capacity_scaler = 1.0
-  }
-}
+# resource "google_compute_backend_service" "webapp_backend" {
+#   name          = "webapp-backend"
+#   health_checks = [google_compute_health_check.webapp_hc.id]
+#   backend {
+#     group           = google_compute_instance_group_manager.webapp_group.instance_group
+#     balancing_mode  = "UTILIZATION"
+#     capacity_scaler = 1.0
+#   }
+# }
 
-resource "google_compute_url_map" "webapp_map" {
-  name            = "webapp-map"
-  default_service = google_compute_backend_service.webapp_backend.id
-}
+# resource "google_compute_url_map" "webapp_map" {
+#   name = "webapp-map"
+#   #default_service = google_compute_backend_service.webapp_backend.id
+#   default_service = module.gce-lb-http.backend_services.default.id
+# }
 
-resource "google_compute_target_http_proxy" "webapp_proxy" {
-  name    = "webapp-proxy"
-  url_map = google_compute_url_map.webapp_map.id
-}
+# resource "google_compute_target_http_proxy" "webapp_proxy" {
+#   name    = "webapp-proxy"
+#   url_map = module.gce-lb-http.url_map.id
+# }
 
-resource "google_compute_global_forwarding_rule" "webapp_rule" {
-  name       = "webapp-rule"
-  target     = google_compute_target_http_proxy.webapp_proxy.id
-  port_range = "80"
-}
+## Remember there is an output of this resource ##
+
+# resource "google_compute_global_forwarding_rule" "webapp_rule" {
+#   name       = "webapp-rule"
+#   target     = module.gce-lb-http.http_proxy[0]
+#   port_range = "80"
+# }
 
 # -- End of Internet facing components definition -- #
