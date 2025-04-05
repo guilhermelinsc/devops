@@ -1,5 +1,6 @@
 variable "project_id" {
   description = "The unique identifier of the Google Cloud project where resources will be deployed. This is required to manage and associate all resources within the specified project."
+  # Suggestion: Use ENV VARIABLES to pass this variable.
 }
 
 # variable "region" {
@@ -9,6 +10,7 @@ variable "project_id" {
 
 variable "credentials_file" {
   description = "File path of the auth keys to connect to GCP account."
+  # Suggestion: Use ENV VARIABLES to pass this file.
 }
 
 # variable "network_name" {
@@ -20,14 +22,17 @@ variable "credentials_file" {
 #   description = "The name of the subnet within the specified VPC network where instances will be deployed. This defines the IP range and regional placement of the resources."
 #   default     = "webapp-subnet"
 # }
+
 variable "ip_cidr_range" {
   description = "The range of IPs for the private subnet defined by the variable 'subnet_name'."
   default     = "10.10.0.0/24"
 }
+
 # variable "instance_count" {
 #   description = "The number of virtual machine instances to be created. This allows for scaling the deployment based on workload requirements."
 #   default     = 2
 # }
+
 # variable "machine_type" {
 #   description = "The type of Compute Engine instance to deploy, specifying CPU, memory, and other performance characteristics (e.g., e2-medium, n1-standard-4)."
 #   default     = "e2-micro"

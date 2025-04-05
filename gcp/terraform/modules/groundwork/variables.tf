@@ -1,5 +1,6 @@
 variable "project_id" {
   description = "The unique identifier of the Google Cloud project where resources will be deployed. This is required to manage and associate all resources within the specified project."
+  # Suggestion: Use ENV VARIABLES to pass this variable.
 }
 
 variable "region" {
@@ -8,7 +9,7 @@ variable "region" {
 }
 
 # variable "credentials_file" {
-#   description = "File path of the auth keys to connect to GCP account."
+#   description = "File path of the auth keys to connect to GCP account. Use ENV VARIABLES to pass this file."
 # }
 
 variable "network_name" {
@@ -37,11 +38,13 @@ variable "machine_type" {
 }
 
 variable "source_image_project" {
-  description = "The OS image family from which the VM instances will be created. This ensures consistency in deployments by always using the latest non-deprecated image from the specified family (e.g., debian-11, ubuntu-minimal-2004-lts)."
-  default     = "ubuntu-os-cloud"
+  description = "The OS image Project from which the VM instances will be created. This ensures consistency in deployments by always using the latest non-deprecated image from the specified family (e.g., debian-11, ubuntu-minimal-2004-lts)."
+  #default     = "ubuntu-os-cloud"
+  default = "modular-rex-454820-v2"
 }
 
-variable "source_image" {
+variable "source_image_family" {
   description = "The OS image family from which the VM instances will be created. This ensures consistency in deployments by always using the latest non-deprecated image from the specified family (e.g., debian-11, ubuntu-minimal-2004-lts)."
-  default     = "ubuntu-2404-lts-amd64"
+  #default     = "ubuntu-2404-lts-amd64"
+  default = "custom-webapp-family"
 }
