@@ -36,7 +36,12 @@ variable "machine_type" {
   default     = "e2-micro"
 }
 
-variable "image_family" {
+variable "source_image_project" {
+  description = "The OS image family from which the VM instances will be created. This ensures consistency in deployments by always using the latest non-deprecated image from the specified family (e.g., debian-11, ubuntu-minimal-2004-lts)."
+  default     = "ubuntu-os-cloud"
+}
+
+variable "source_image" {
   description = "The OS image family from which the VM instances will be created. This ensures consistency in deployments by always using the latest non-deprecated image from the specified family (e.g., debian-11, ubuntu-minimal-2004-lts)."
   default     = "ubuntu-2404-lts-amd64"
 }
