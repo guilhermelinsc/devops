@@ -82,16 +82,16 @@ devops/
   
 ## 🧼 Cleanup
 
-To destroy all the resources created:
+   To destroy all the resources created:
 
-```bash
-terraform destroy
-```
+   ```bash
+   terraform destroy
+   ```
 
 ## 🤝 Contributing
 
-Pull requests and suggestions are welcome! If you'd like to contribute, fork the repo and submit a PR.
+   Pull requests and suggestions are welcome! If you'd like to contribute, fork the repo and submit a PR.
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
+   This project is licensed under the [MIT License](LICENSE).
