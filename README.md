@@ -79,12 +79,12 @@ Each web server node serves a sample page that displays its own hostname, demons
 
    ```bash
    git clone https://github.com/guilhermelinsc/devops.git
-   cd devops/gcp/packer
    ```
 
 2. **Initialize and Run Packer:**
 
    ```bash
+   cd devops/gcp/packer
    packer init .
    packer build .
    ```
@@ -92,6 +92,7 @@ Each web server node serves a sample page that displays its own hostname, demons
 3. **Initialize Terraform:**
 
    ```bash
+   cd devops/gcp/terraform
    terraform init
    ```
 
