@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = var.state_bucket
+    bucket = "tf_glcs_backend"
     #prefix = "terraform/state"
   }
   required_providers {

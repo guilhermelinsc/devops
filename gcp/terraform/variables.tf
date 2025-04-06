@@ -42,7 +42,3 @@ variable "ip_cidr_range" {
 #   description = "The OS image family from which the VM instances will be created. This ensures consistency in deployments by always using the latest non-deprecated image from the specified family (e.g., debian-11, ubuntu-minimal-2004-lts)."
 #   default     = "ubuntu-pro-2404-lts-amd64"
 # }
-
-variable "state_bucket" {
-  description = "The GCP bucket to store the state files. Must be created before configuring Terraform."
-}
