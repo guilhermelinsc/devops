@@ -39,9 +39,40 @@ terraform.rc
 
 # End of https://www.toptal.com/developers/gitignore/api/terraform
 
+### Packer ###
+# Cache objects
+packer_cache/
+
+# Crash log
+crash.log
+
+# https://www.packer.io/guides/hcl/variables
+# Exclude all .pkrvars.hcl files, which are likely to contain sensitive data,
+# such as password, private keys, and other secrets. These should not be part of
+# version control as they are data points which are potentially sensitive and
+# subject to change depending on the environment.
+#
+*.pkrvars.hcl
+
+# For built boxes
+*.box
+
+### Packer Patch ###
+# ignore temporary output files
+output-*/
+
+### Ansible ###
+*.retry
+roles/
+
 #Ignore deploy.sh Logs
 deploy*.log*
 create_files.sh
 terraform/.terraform.lock.hcl
 gcp/plano
 deploy.sh
+
+#Ignore Python venv
+.vscode
+.venv
+

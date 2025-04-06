@@ -1,0 +1,38 @@
+---
+- name: Configure Web App Image
+  hosts: all
+  remote_user: packer
+  become: true
+
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+      become: true
+
+    - name: Upgrade all packages
+      ansible.builtin.apt:
+        upgrade: dist
+        autoremove: true
+      become: true
+
+    - name: Install Apache and net-tools
+      ansible.builtin.apt:
+        name:
+          - apache2
+          - net-tools
+        state: present
+      become: true
+
+    - name: Enable Apache service
+      ansible.builtin.systemd:
+        name: apache2
+        enabled: true
+      become: true
+
+    - name: Restart Apache service
+      ansible.builtin.systemd:
+        name: apache2
+        state: restarted
+      become: true

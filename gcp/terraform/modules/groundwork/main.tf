@@ -54,7 +54,7 @@ module "instance_template" {
   project_id           = var.project_id
   machine_type         = var.machine_type
   region               = var.region
-  source_image         = var.source_image
+  source_image_family  = var.source_image_family
   source_image_project = var.source_image_project
   disk_size_gb         = 20
   network              = module.vpc.network_id
@@ -63,7 +63,8 @@ module "instance_template" {
   access_config = [{
     network_tier = "STANDARD"
   }]
-  startup_script = "#! /bin/bash\n     sudo apt update\n     sudo apt install apache2 net-tools -y\n     vm_hostname=\"$(curl -H \"Metadata-Flavor:Google\" \\\n   http://169.254.169.254/computeMetadata/v1/instance/name)\"\n   sudo echo \"Page served from: $vm_hostname\" | \\\n   tee /var/www/html/index.html\n   sudo systemctl restart apache2"
+  startup_script = "#! /bin/bash\n     vm_hostname=\"$(curl -H \"Metadata-Flavor:Google\" \\\n   http://169.254.169.254/computeMetadata/v1/instance/name)\"\n   sudo echo \"Page served from: $vm_hostname\" | \\\n   tee /var/www/html/index.html\n   sudo systemctl restart apache2"
+  #startup_script = file("~/devops/gcp/terraform/modules/groundwork/start.sh")
 }
 
 module "mig" {
