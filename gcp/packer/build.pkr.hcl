@@ -9,6 +9,9 @@ build {
     # ansible_env_vars = ["ANSIBLE_REMOTE_TMP=/tmp/.ansible/tmp" ]
     user = "packer"
     
-    extra_arguments = ["-vvvv"]
+    extra_arguments = [
+      "--scp-extra-args", "'-O'", "-vvvv"
+    ]
+    #extra_arguments = []
   }
 }
