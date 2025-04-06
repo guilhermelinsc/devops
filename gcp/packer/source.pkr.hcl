@@ -11,8 +11,4 @@ source "googlecompute" "webapp" {
   image_name        = local.image_name
   image_family      = "custom-webapp-family"
   image_description = "Custom image for scalable web app"
-
-  metadata = {
-    ssh-keys = "packer:${file("~/.ssh/id_ecdsa.pub")}"
-  }
 }

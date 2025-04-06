@@ -8,36 +8,69 @@ Each web server node serves a sample page that displays its own hostname, demons
 
 ## 📁 Project Structure
 
-```bash
-devops/ 
-└── gcp/ 
-  └── terraform/ 
-    ├── main.tf 
-    ├── variables.tf 
-    └── outputs.tf 
-      └── modules/ 
-        └── groundwork/ 
-          ├── main.tf
-          ├── variables.tf 
-          └── outputs.tf 
+```
+── gcp
+│  ├─ packer
+│  │  ├─ ansible
+│  │  │  └─ playbook.yml
+│  │  ├─ build.pkr.hcl
+│  │  ├─ init.pkr.hcl
+│  │  ├─ source.pkr.hcl
+│  │  └─ variables.pkr.hcl
+│  └─ terraform
+│     ├─ .terraform.lock.hcl
+│     ├─ main.tf
+│     ├─ modules
+│     │  └─ groundwork
+│     │     ├─ main.tf
+│     │     ├─ outputs.tf
+│     │     ├─ start.sh
+│     │     └─ variables.tf
+│     ├─ outputs.tf
+│     ├─ provider.tf
+│     └─ variables.tf
+├─ .gitignore
+├─ LICENSE
+└─ README.md
+
 ```
 
 ## 🚀 Features - More to come
 
-- Infrastructure as Code with Terraform
-- GCP VM instances running sample web servers
+- Infrastructure as Code with **Terraform**
+- Web Server custom image creation with **Packer**
+- Package management with **Ansible**  
+- **GCP** VM instances running sample web servers
 - HTTP Load Balancer to distribute traffic across instances
 
 ## ✅ Prerequisites
 
 - [Terraform](https://www.terraform.io/downloads.html)
+- [Packer](https://developer.hashicorp.com/packer/tutorials/docker-get-started/get-started-install-cli)
+- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 - A free-tier GCP project
 - A service account with sufficient IAM permissions (Compute Admin, Network Admin)
+- A GCP Bucket to store the Terraform state
 - GCloud configured 
 - GCP credentials exported as an environment variable:
 
   ```bash
+  
+  # ENV VARIABLE for Terraform - GCP usage
+  #
   export TF_VAR_credentials_file="/path/to/your/credentials.json"
+  export TF_VAR_project_id="your_project_id"
+  
+  # Packer GCP Variables
+  #
+  export PKR_VAR_project_id=$TF_VAR_project_id
+  
+  # Ansible GCP Variables
+  #
+  export GCP_AUTH_KIND="serviceaccount"
+  export GCP_SERVICE_ACCOUNT_EMAIL="your_gcp_email"
+  export GCP_SERVICE_ACCOUNT_FILE=$TF_VAR_credentials_file
+
   ```
 
 ## ⚙️ Getting Started
@@ -46,37 +79,44 @@ devops/
 
    ```bash
    git clone https://github.com/guilhermelinsc/devops.git
-   cd devops/gcp/terraform
+   cd devops/gcp/packer
    ```
 
-2. **Initialize Terraform:**
+2. **Initialize and Run Packer:**
+
+   ```bash
+   packer init .
+   packer build .
+   ```
+
+3. **Initialize Terraform:**
 
    ```bash
    terraform init
    ```
 
-3. **Review the execution plan:**
+4. **Review the execution plan:**
 
    ```bash
    terraform plan
    ```
 
-4. **Apply the infrastructure:**
+5. **Apply the infrastructure:**
 
    ```bash
    terraform apply
    ```
 
-   Type `yes` when prompted to confirm.
+   Type `yes` when prompted to confirm. Or use flag `-auto--approve`.
 
-5. **Access the Load Balancer:**
+6. **Access the Load Balancer:**
 
    After the apply is complete, Terraform will output the external IP address of the load balancer.
    
    Open it in a browser or run the command below to test load balancing across nodes.
    
     ```bash
-    while true; do sleep 3 && curl http://LB_external_IP; done
+    while true; do sleep 1 && curl http://LB_external_IP; done
     ```
     Use CTRL+C to break the while.
   
@@ -85,7 +125,7 @@ devops/
    To destroy all the resources created:
 
    ```bash
-   terraform destroy
+   terraform destroy -auto-approve
    ```
 
 ## 🤝 Contributing

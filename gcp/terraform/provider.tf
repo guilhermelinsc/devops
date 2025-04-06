@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = "tf_glcs_backend"
+    bucket = var.state_bucket
     #prefix = "terraform/state"
   }
   required_providers {
@@ -12,8 +12,8 @@ terraform {
 }
 
 provider "google" {
-  project     = var.project_id
-  region      = "us-east1"
-  zone        = "us-east1-b"
-  credentials = file(var.credentials_file)
+  project = var.project_id
+  region  = "us-east1"
+  zone    = "us-east1-b"
+  #credentials = file(var.credentials_file)
 }

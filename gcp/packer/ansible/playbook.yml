@@ -3,7 +3,6 @@
   hosts: all
   remote_user: packer
   become: true
-  # connection: local
 
   tasks:
     - name: Update apt cache
